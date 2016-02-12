@@ -43,7 +43,7 @@ def main():
         '#21: 03.07',
         '#22: 10.07',
   ]
-  rnd = Random('FordBoyard')
+  rnd = Random('FortBoyard')
   iters = 0
 
   mv = -1e20
