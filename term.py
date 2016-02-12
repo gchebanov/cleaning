@@ -46,7 +46,7 @@ def main():
   rnd = Random('FortBoyard')
   iters = 0
 
-  mv = -1e20
+  mv, last_it = None, 0
   assign = [k for k, v in r.items() for i in range(v)]
 
   while True:
@@ -54,11 +54,11 @@ def main():
     rnd.shuffle(assign)
     if 'G' not in assign[-4:] and 'A' not in assign[-4:]:
       cv = metric(assign)
-      if mv < cv:
-        mv = cv
-        if iters > 1e5:
+      if mv is None or mv < cv:
+        if last_it and iters >= 1e6:
           print(iters, cv, assign)
           break
+        mv, last_it = cv, iters
 
 if __name__ == "__main__":
   main()
