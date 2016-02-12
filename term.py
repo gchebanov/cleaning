@@ -1,43 +1,63 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 from random import Random
 from collections import Counter
 
+from math import pi, exp
+
+def metric(assign):
+  kv = list(set(assign))
+  hv = [[1 if j == k else 0 for j in assign] for k in kv]
+  def gauss(v, r = 1.0):
+    n = len(v)
+    return [sum((v[i] * exp(-(i-j)**2 / (2 * r * r)) for i in range(n))) / (2 * pi * r * r) for j in range(n)]
+
+  gv = [gauss(p) for p in hv]
+  def dist(a, b):
+    return sum((p * q for p, q in zip(a, b)))
+  return sum((dist(p, q) for p in gv for q in gv if p != q))
+
 def main():
-  r = {'G': 3, 'O': 2, 'A': 5, 'L': 5, 'I': 5}
+  r = {'G': 4, 'A': 2, 'L': 8, 'I': 8}
   w = [
-    '01.09-06.09',
-    '07.09-13.09',
-    '14.09-20.09',
-    '21.09-27.09',
-    '28.09-04.10',
-    '05.10-11.10',
-    '12.10-18.10',
-    '19.10-25.10',
-    '26.10-01.11',
-    '02.11-08.10',
-    '09.11-15.10',
-    '16.11-22.10',
-    '23.11-29.10',
-    '30.11-06.12',
-    '07.12-13.12',
-    '14.12-20.12',
-    '21.12-27.12',
-    #'28.12-13.12',
-    '04.01-10.01',
-    '11.01-17.01',
-    '18.01-24.01',
+        '#1: 14.02',
+        '#2: 21.02',
+        '#3: 28.02',
+        '#4: 06.03',
+        '#5: 13.03',
+        '#6: 20.03',
+        '#7: 27.03',
+        '#8: 03.04',
+        '#9: 10.04',
+        '#10: 17.04',
+        '#11: 24.04',
+        '#12: 01.05',
+        '#13: 08.05',
+        '#14: 15.05',
+        '#15: 22.05',
+        '#16: 29.05',
+        '#17: 05.06',
+        '#18: 12.06',
+        '#19: 19.06',
+        '#20: 26.06',
+        '#21: 03.07',
+        '#22: 10.07',
   ]
-  rnd = Random('Antananarivo')
+  rnd = Random('FordBoyard')
   iters = 0
+
+  mv = -1e20
+  assign = [k for k, v in r.items() for i in range(v)]
+
   while True:
     iters += 1
-    assign = [rnd.choice(sorted(list(r.keys()))) for i in range(sum(r.values()))]
-    if Counter(assign) == r:
-      if assign[0] == 'O':
-        # print(iters, assign)
-        if all(map(lambda x: x[0]!=x[1], zip(assign, assign[1:]))): 
-          print(iters, assign)
+    rnd.shuffle(assign)
+    if 'G' not in assign[-4:] and 'A' not in assign[-4:]:
+      cv = metric(assign)
+      if mv < cv:
+        mv = cv
+        if iters > 1e5:
+          print(iters, cv, assign)
           break
 
 if __name__ == "__main__":
